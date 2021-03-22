@@ -9,8 +9,8 @@ alert(9 / 5 * +celsiusTerm + 32)
 
 let admin
 let name
-name = "Василий"
-admin = name
+nameMy = "Василий"
+admin = nameMy
 console.log(admin)
 
 
@@ -19,3 +19,4 @@ console.log(admin)
 "10001008", тип "string";
 
 /*4. * Самостоятельно разобраться с атрибутами тега script(async и defer)*/
+вроде да.
