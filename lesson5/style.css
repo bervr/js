@@ -48,6 +48,6 @@
 }
 .white-figure{
     color: white;
-   -webkit-text-stroke: 1px grey;
+   -webkit-text-stroke: 0.5px black;
    -webkit-text-fill-color: white;
 }

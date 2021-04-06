@@ -52,14 +52,11 @@
                 color2 = 'black-figure';
                 color1 = 'white-figure';
             };
-
-            //let color = 'black-figure';
             let army = ['Ладья', 'Конь', 'Слон', 'Король', 'Ферзь', 'Слон', 'Конь', 'Ладья'];
             let rows7 = document.getElementsByClassName('line7');
             let rows8 = document.getElementsByClassName('line8');
             let rows2 = document.getElementsByClassName('line2');
             let rows1 = document.getElementsByClassName('line1');
-            //console.log(rows);
             for (let i = 0; i < 9; i++) {
                 rows7[i].insertAdjacentHTML('beforeend', `<p class='figure ${color1}'>Пешка</p>`);
                 rows8[i].insertAdjacentHTML('beforeend', `<p class='figure ${color1}'>${army[i]}</p>`);
@@ -67,9 +64,7 @@
                 rows1[i].insertAdjacentHTML('beforeend', `<p class='figure ${color2}'>${army[i]}</p>`);
             };
         };
-
         document.body.insertAdjacentHTML('beforeend', drawBoard());
-        //console.log(drawBoard());
         figures(2);
 
 
