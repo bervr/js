@@ -78,59 +78,63 @@ const eShop = {
     },
 
     init() {
-        document.getElementById("catalog").innerHTML = ""; //очистка и перерисовка корзины и каталога
-        document.getElementById('cart-list').innerHTML = "";
-        document.getElementById("catalog").insertAdjacentHTML('beforeend', this.Product.printCatalog());
-        document.getElementById('cart-list').insertAdjacentHTML('beforeend', this.shoppingCart.printBasket());
+        this.render();
+        document.querySelector('.cart-btn').addEventListener('click', event => { this.clearCart() });
         document.querySelector(this.settings.addToCartSelector) //ловим клики в блоке addToCartSelector
             .addEventListener('click', event => {
                 this.containerClickHandler(event)
             });
-
+    },
+    render() {
+        document.getElementById("catalog").innerHTML = ""; //очистка и перерисовка корзины и каталога
+        document.getElementById('cart-list').innerHTML = "";
+        document.getElementById("catalog").insertAdjacentHTML('beforeend', this.Product.printCatalog());
+        document.getElementById('cart-list').insertAdjacentHTML('beforeend', this.shoppingCart.printBasket());
     },
     containerClickHandler(event) {
-        console.log('нажатие!')
+        let targetProduct = {};
         if (event.target.tagName !== 'BUTTON') return; // выбираем из кликов кнопки в блоке каталога
-        let targetProduct = this.Product.goods.find(x => x.productId == event.target.dataset.product_id);
-        // из нажатий кнопки по датасету определяем какой товар хотели добавить и получаем обьект товара
-
+        targetProduct = this.Product.goods.find(x => x.productId == event.target.dataset.product_id).productId;
+        // из нажатий кнопки по датасету определяем какой товар хотели добавить и получаем id товара
         this.takeToCart(targetProduct);
     },
 
     takeToCart(oneNewGood) {
         //  //в каталоге ищем товар с таким же ID 
-        // let newItem = this.Product.goods.find(x => x.productId == oneNewGood.productId) 
-        if (oneNewGood.quntity > 0) {
-            // console.log(oneNewGood);
-            // console.log(oneNewGood, 'до убавления на 1');
-            oneNewGood.quntity--;
-            // console.log(oneNewGood, 'после убавления на 1');
+        let newItem = this.Product.goods.find(x => x.productId == oneNewGood)
+        if (newItem.quntity > 0) {
+            newItem.quntity--;
             this.addToCart(oneNewGood);
         }
         else {
             console.log('товар закончился')
-
         };
     },
     addToCart(oneNewGood) {
-        let newItem = this.shoppingCart.goods.find(x => x.productId == oneNewGood.productId)
-        // console.log(newItem, 'уже есть в корзине');
+        let newItemToCart = this.shoppingCart.goods.find(x => x.productId == oneNewGood)
         // ищем в корзине товар с таким же id как тот по которому кликнули, если он уже есть - добавляем еще 1
-        if (newItem) {
-            newItem.quntity++
-            // console.log(newItem, 'прибавляем  1 в корзину');
+        if (newItemToCart) {
+            ++newItemToCart.quntity
+            console.log(newItemToCart);
         }
         else { //если нет то добавляем  новый товар
-            let newItem = Object.assign({}, oneNewGood);
-            // console.log(newItem, 'еще не было  в корзине');
-            newItem.quntity = 1
-            // console.log(newItem, 'то что добавляем в корзину');
-            this.shoppingCart.goods.push(newItem)
-            //console.log(newItem);
+            let newItemToCart = Object.assign({}, this.Product.goods.find(x => x.productId == oneNewGood));
+            newItemToCart.quntity = 1
+            this.shoppingCart.goods.push(newItemToCart)
         }
-        this.init(); //перерисовываем все
+        this.render(); //перерисовываем все
 
     },
+    clearCart() {
+        let goodsInCart = this.shoppingCart.goods;
+        if (goodsInCart) {
+            goodsInCart.forEach(element => {
+                this.Product.goods.find(x => x.productId == element.productId).quntity += element.quntity
+            })
+        }
+        goodsInCart = [];
+        this.render();
+    }
 };
 
 eShop.init();
