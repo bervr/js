@@ -125,14 +125,14 @@ const eShop = {
         this.render(); //перерисовываем все
 
     },
-    clearCart() {
+    clearCart() { //вернем все из корзины в каталог
         let goodsInCart = this.shoppingCart.goods;
         if (goodsInCart) {
-            goodsInCart.forEach(element => {
-                this.Product.goods.find(x => x.productId == element.productId).quntity += element.quntity
-            })
+            while (goodsInCart.length - 1 >= 0) {
+                let element = goodsInCart.shift();
+                this.Product.goods.find(x => x.productId == element.productId).quntity += element.quntity;
+            }
         }
-        goodsInCart = [];
         this.render();
     }
 };
