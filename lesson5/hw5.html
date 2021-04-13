@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- 1. Создать функцию, генерирующую шахматную доску. При этом можно использовать любые html-теги по своему желанию. Доска
+должна быть разлинована соответствующим образом, т.е. чередовать черные и белые ячейки. Строки должны нумероваться
+числами от 1 до 8, столбцы – латинскими буквами A, B, C, D, E, F, G, H.
+2*. Заполнить созданную таблицу буквами, отвечающими за шахматную фигуру, например К – король, Ф – ферзь и т.п., -->
+
+    <script>
+        function drawBoard() {
+            let letters = 'ABCDEFGH';
+            let newBoard = '';
+            for (let i = 1; i < 9; i++) {
+                newBoard += `<div class='line'>\n<div class='number'>${i}</div>\n`;
+                for (let j = 1; j < 9; j++) {
+                    if ((j + i) % 2 == 0) {
+                        newBoard += `<div class='cell black line${i} row${j}'></div>\n`;
+                    }
+                    else {
+                        newBoard += `<div class='cell white line${i} row${j}'></div>\n`;
+                    };
+                };
+                newBoard += '</div >\n';
+            };
+            newBoard += '<div  class="letters">\n'
+            for (let i = 1; i < 9; i++) {
+                newBoard += `<div  class='letter'> ${letters[i - 1]}</div>\n`;
+            }
+            newBoard += '</div>\n';
+            return newBoard;
+        };
+
+        function figures(who) {
+            // фигуры в середине же не расставляются, и порядок не меняется, поэтому захардкодим
+            let color1;
+            let color2;
+            if (who == 1) {  // кто сверху, кто снизу
+                color1 = 'black-figure';
+                color2 = 'white-figure';
+            }
+            else {
+                color2 = 'black-figure';
+                color1 = 'white-figure';
+            };
+            let army = ['Ладья', 'Конь', 'Слон', 'Король', 'Ферзь', 'Слон', 'Конь', 'Ладья'];
+            let rows7 = document.getElementsByClassName('line7');
+            let rows8 = document.getElementsByClassName('line8');
+            let rows2 = document.getElementsByClassName('line2');
+            let rows1 = document.getElementsByClassName('line1');
+            for (let i = 0; i < 9; i++) {
+                rows7[i].insertAdjacentHTML('beforeend', `<p class='figure ${color1}'>Пешка</p>`);
+                rows8[i].insertAdjacentHTML('beforeend', `<p class='figure ${color1}'>${army[i]}</p>`);
+                rows2[i].insertAdjacentHTML('beforeend', `<p class='figure ${color2}'>Пешка</p>`);
+                rows1[i].insertAdjacentHTML('beforeend', `<p class='figure ${color2}'>${army[i]}</p>`);
+            };
+        };
+        document.body.insertAdjacentHTML('beforeend', drawBoard());
+        figures(2);
+
+
+
+    </script>
+</body>
+
+
+</html>

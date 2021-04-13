@@ -1,0 +1,53 @@
+.line{
+    display:flex;
+    
+}
+
+.cell{
+    width: 100px;
+    height: 100px;
+    border:  1px solid #000;
+    box-sizing: content-box;
+
+    
+    
+}
+
+.white{
+    background-color: white;
+}
+.black{
+    background-color: gray;
+}
+.number{
+    align-items: center;
+    padding-top: 50px;
+
+}
+.letters{
+     display:flex;
+     flex-wrap: wrap;
+     margin-left: 50px;
+}
+.letter{
+    width: 100px;
+    left: auto;
+}
+.figure{
+    text-align: center;
+    font-size: 30px;
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px; 
+}
+.black-figure{
+    color: black;
+   -webkit-text-stroke: 1px black;
+   -webkit-text-fill-color: black;
+}
+.white-figure{
+    color: white;
+   -webkit-text-stroke: 0.5px black;
+   -webkit-text-fill-color: white;
+}
