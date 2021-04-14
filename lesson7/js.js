@@ -1,4 +1,9 @@
 "use strict";
+/* 1. Выводить счёт в режиме реального времени.
+2. Генерировать временные препятствия на поле.
+3. * Убрать границы поля.Т.е.при пересечении границы поля змейка появляется с противоположной стороны. */
+
+
 const settings = {
     rowsCount: 21,
     colsCount: 21,
@@ -84,12 +89,20 @@ const map = {
         }
     },
 
-    render(snakePointsArray, foodPoint) {
+    render(snakePointsArray, foodPoint, score, barrierPoint) {
+
         for (const cell of this.usedCells) {
             cell.className = 'cell';
         }
 
         this.usedCells = [];
+        const barrierCell = this.cells[`x${barrierPoint.x}_y${barrierPoint.y}`];
+        barrierCell.classList.add('barrier');
+        this.usedCells.push(barrierCell);
+
+        const foodCell = this.cells[`x${foodPoint.x}_y${foodPoint.y}`];
+        foodCell.classList.add('food');
+        this.usedCells.push(foodCell);
 
         snakePointsArray.forEach((point, index) => {
             const snakeCell = this.cells[`x${point.x}_y${point.y}`];
@@ -97,13 +110,28 @@ const map = {
             this.usedCells.push(snakeCell);
         });
 
-        const foodCell = this.cells[`x${foodPoint.x}_y${foodPoint.y}`];
-        foodCell.classList.add('food');
-        this.usedCells.push(foodCell);
+
+
+        this.printScore(score);
+
+
+
+
     },
+
+    printScore(score = 0) {
+        let newScore = -1;
+        const viewScore = document.getElementById('score');
+        if (score != newScore) {
+            viewScore.innerHTML = score;
+            newScore = score;
+        }
+    },
+
 };
 
 const snake = {
+    config,
     body: null,
     direction: null,
     lastStepDirection: null,
@@ -145,21 +173,64 @@ const snake = {
 
     getNextStepHeadPoint() {
         const firstPoint = this.getBody()[0];
-
-        switch(this.direction) {
+        switch (this.direction) {
             case 'up':
-                return {x: firstPoint.x, y: firstPoint.y - 1};
+                if (firstPoint.y - 1 > -1) {
+                    return { x: firstPoint.x, y: firstPoint.y - 1 }
+                }
+                else {
+                    return { x: firstPoint.x, y: this.config.getRowsCount() }
+                }
+
             case 'right':
-                return {x: firstPoint.x + 1, y: firstPoint.y};
+                if (firstPoint.x + 1 < this.config.getColsCount()) {
+                    return { x: firstPoint.x + 1, y: firstPoint.y }
+                }
+                else {
+                    return { x: 0, y: firstPoint.y }
+                }
+                return { x: firstPoint.x + 1, y: firstPoint.y };
             case 'down':
-                return {x: firstPoint.x, y: firstPoint.y + 1};
+                if (firstPoint.y + 1 < this.config.getRowsCount()) {
+                    return { x: firstPoint.x, y: firstPoint.y + 1 }
+                }
+                else {
+                    return { x: firstPoint.x, y: 0 }
+                }
             case 'left':
-                return {x: firstPoint.x - 1, y: firstPoint.y};
+
+                if (firstPoint.x - 1 > -1) {
+                    return { x: firstPoint.x - 1, y: firstPoint.y }
+                }
+                else {
+                    return { x: this.config.getColsCount(), y: firstPoint.y }
+                }
+
         }
     },
 };
 
 const food = {
+    x: null,
+    y: null,
+
+    getCoordinates() {
+        return {
+            x: this.x,
+            y: this.y,
+        };
+    },
+
+    setCoordinates(point) {
+        this.x = point.x;
+        this.y = point.y;
+    },
+
+    isOnPoint(point) {
+        return this.x === point.x && this.y === point.y;
+    },
+};
+const barrier = {
     x: null,
     y: null,
 
@@ -209,6 +280,7 @@ const game = {
     map,
     snake,
     food,
+    barrier,
     status,
     tickInterval: null,
 
@@ -233,6 +305,7 @@ const game = {
         this.stop();
         this.snake.init(this.getStartSnakeBody(), 'up');
         this.food.setCoordinates(this.getRandomFreeCoordinates());
+        this.barrier.setCoordinates(this.getRandomFreeCoordinates());
         this.render();
     },
 
@@ -262,6 +335,7 @@ const game = {
         if (this.food.isOnPoint(this.snake.getNextStepHeadPoint())) {
             this.snake.growUp();
             this.food.setCoordinates(this.getRandomFreeCoordinates());
+            this.barrier.setCoordinates(this.getRandomFreeCoordinates());
 
             if (this.isGameWon()) {
                 this.finish();
@@ -275,11 +349,17 @@ const game = {
     canMakeStep() {
         const nextHeadPoint = this.snake.getNextStepHeadPoint();
         return !this.snake.isOnPoint(nextHeadPoint) &&
-            nextHeadPoint.x < this.config.getColsCount() &&
-            nextHeadPoint.y < this.config.getRowsCount() &&
-            nextHeadPoint.x >= 0 &&
-            nextHeadPoint.y >= 0;
+            // nextHeadPoint.x < this.config.getColsCount() &&
+            // nextHeadPoint.y < this.config.getRowsCount() &&
+            // nextHeadPoint.x >= 0 &&
+            // nextHeadPoint.y >= 0 &&
+            !this.snake.isOnPoint(this.barrier.getCoordinates());
     },
+    gameScore() {
+        return this.snake.getBody().length - 1
+    },
+
+
 
     isGameWon() {
         return this.snake.getBody().length > this.config.getWinFoodCount();
@@ -327,7 +407,7 @@ const game = {
     },
 
     render() {
-        this.map.render(this.snake.getBody(), this.food.getCoordinates());
+        this.map.render(this.snake.getBody(), this.food.getCoordinates(), this.gameScore(), this.barrier.getCoordinates());
     },
 
     playClickHandler() {
@@ -342,7 +422,7 @@ const game = {
         this.reset();
     },
 
-    keyDownHandler(event) {
+    keyDownHandler(event) { //отлов нажатий
         if (!this.status.isPlaying()) return;
 
         const direction = this.getDirectionByCode(event.code);
@@ -352,7 +432,7 @@ const game = {
         }
     },
 
-    getDirectionByCode(code) {
+    getDirectionByCode(code) { //обработка нажатий
         switch (code) {
             case 'KeyW':
             case 'ArrowUp':
@@ -369,7 +449,7 @@ const game = {
         }
     },
 
-    canSetDirection(direction) {
+    canSetDirection(direction) { //запрет разворота
         const lastStepDirection = this.snake.getLastStepDirection();
 
         return direction === 'up' && lastStepDirection !== 'down' ||
@@ -379,4 +459,4 @@ const game = {
     },
 };
 
-game.init({speed: 5});
+game.init({ speed: 5 });
