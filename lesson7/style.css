@@ -19,6 +19,7 @@
     border-collapse: collapse;
     margin: 2% auto 0;
 }
+<<<<<<< HEAD
 #game-wrap{
     display: flex;
     justify-content:center
@@ -28,6 +29,11 @@
     display: flex;
     justify-content: center;
     width: 500px;
+=======
+#menu{
+    display: flex;
+    justify-content: center;
+>>>>>>> f494eb969a830dba022afda2f0e637dc70c0df95
 }
 td.cell{
     width: 20px;
@@ -35,6 +41,7 @@ td.cell{
     border: 1px dotted #eee;
     border-collapse: collapse;
 }
+<<<<<<< HEAD
 
 #score{
     width: 170px;
@@ -59,6 +66,11 @@ td.cell{
     background: yellow;
 }
 
+=======
+.food{
+    background: #00d021;
+}
+>>>>>>> f494eb969a830dba022afda2f0e637dc70c0df95
 .snakeBody{
     background: #e5e5e5;
 }

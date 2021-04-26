@@ -110,8 +110,18 @@ const map = {
             this.usedCells.push(snakeCell);
         });
 
+<<<<<<< HEAD
         this.printScore(score);
 
+=======
+
+
+        this.printScore(score);
+
+
+
+
+>>>>>>> f494eb969a830dba022afda2f0e637dc70c0df95
     },
 
     printScore(score = 0) {
